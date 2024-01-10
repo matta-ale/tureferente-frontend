@@ -1,5 +1,5 @@
-[
-  { "neighbourhood": "Echesortu" },
-  { "neighbourhood": "Martin" },
-  { "neighbourhood": "Lisandro de la torre" }
+[ 
+  { "value": "echesortu","label": "Echesortu"},
+  { "value": "martin","label": "Barrio Martin"},
+  { "value": "lisandro-de-la-torre","label": "Lisandro de la torre"}
 ]
