@@ -3,6 +3,11 @@ import logo from './assets/img/logo referente.png';
 import './App.css';
 import { useState } from 'react';
 import Results from './Components/Results.tsx';
+import axios from 'axios'
+import { BACKEND_URL } from './envVariables.ts';
+
+
+const URL = BACKEND_URL
 
 function App() {
   const [filters, setFilters] = useState({
@@ -10,6 +15,8 @@ function App() {
     tipoContrato: '',
     tipoInmueble: '',
   });
+
+  const [quantity,setQuantity] = useState(0)
 
   type SelectChangeHandler = (newValue: unknown, name: string) => void;
 
@@ -19,8 +26,9 @@ function App() {
     console.log(filters);
   };
 
-  const handleGetQuantity = () => {
-
+  const handleGetQuantity = async () => {
+    const {data} = await axios.get(`${URL}/zonapropquantity?propertyType=${filters.tipoInmueble}&contractType=${filters.tipoContrato}&neighborhood=${filters.barrio}`)
+    setQuantity(data)
   };
 
   const handleGetMetrics = () => {};
@@ -44,7 +52,7 @@ function App() {
         <div className='w-full flex flex-col'>
           <div className='h-[500px] bg-gradient-to-r from-violet1 to-violet2 mix-blend-multiply'></div>
           <div className='bg-pink1 w-full h-full relative'>
-            <Results></Results>
+            <Results quantity={quantity}></Results>
           </div>
         </div>
       </div>
