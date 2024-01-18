@@ -1,0 +1,38 @@
+.price-input {
+  display: flex;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.price-input input {
+  flex: 1; /* Expand input to take all available space */
+  border: none;
+  padding: 8px 10px;
+  text-align: right;
+}
+
+.price-input .arrows {
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid #ccc;
+  padding: 5px 8px;
+  background-color: #f2f2f2;
+}
+
+.price-input button {
+  width: 100%;
+  background: none;
+  border: none;
+  font-size: 16px;
+  line-height: 1; /* Center arrow vertically */
+  cursor: pointer;
+}
+
+.price-input button:hover {
+  background-color: #e0e0e0;
+}
+
+.price-input .dollar-sign {
+  overflow: hidden;
+  white-space: nowrap;
+}
