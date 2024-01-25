@@ -1,39 +1,39 @@
-import { ChangeEvent, useState } from 'react';
-import './PriceInput.css';
-
-type OnInputChangeHandler = (e: ChangeEvent<HTMLInputElement> & { name: string }) => void;
-
+import React, { ChangeEvent } from 'react';
 
 interface PriceInputProps {
   label: string;
-  onInputChange: OnInputChangeHandler;
-  name:string
+  value: number; // Change the type to number
+  onChange: (newValue: number) => void;
 }
 
-const PriceInput: React.FC<PriceInputProps> = (props:{label:string, onInputChange:OnInputChangeHandler, name:string}) => {
-  const {label, onInputChange} = props
-  const [price, setPrice] = useState(0);
-
+const PriceInput: React.FC<PriceInputProps> = ({ label, value, onChange }) => {
   const handleIncrement = () => {
-    setPrice(price + 100);
+    onChange(value + 100); 
   };
 
   const handleDecrement = () => {
-    setPrice(Math.max(0, price - 100));
+    onChange(Math.max(0, value - 100)); // Prevent going below zero
+  };
+
+  // Function to format the value as currency
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('en-US', { 
+      style: 'currency', 
+      currency: 'USD' 
+    }).format(value);
   };
 
   return (
-    <div className="flex font-bold items-center">
-      <label className=' px-1 flex flex-col justify-center'>{label}</label>
-      <label className='h-10 pl-3 pr-1 flex flex-col justify-center bg-white'>USD</label>
-      <input className='w-[60px] h-10' type="number" value={price} step="100" min="0" readOnly onChange={onInputChange}/>
-      <div className="flex flex-col bg-blue-400 h-10">
-        <button onClick={handleIncrement} aria-label="Increase Price">
-          ⬆️
-        </button>
-        <button onClick={handleDecrement} aria-label="Decrease Price">
-          ⬇️
-        </button>
+    <div>
+      <label>{label}</label>
+      <div> {/* Wrap input and buttons in a container */}
+        <button onClick={handleDecrement}>-</button>
+        <input 
+          type="text" 
+          value={formatCurrency(value)} // Display formatted currency
+          onChange={(e) => onChange(parseInt(e.target.value.replace(/[^0-9.-]+/g,""), 10))} // Parse the input
+        />
+        <button onClick={handleIncrement}>+</button>
       </div>
     </div>
   );

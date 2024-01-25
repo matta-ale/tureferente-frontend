@@ -7,25 +7,30 @@ import axios from 'axios';
 import { BACKEND_URL } from './envVariables.ts';
 import { urlMaker } from './helpers/urlMaker.ts';
 import PriceInput from '../src/Components/PriceInput.tsx';
+import { AppState } from './helpers/interfaces.tsx';
+import { Metrics } from './helpers/interfaces.tsx';
+
 
 const BASE_URL = BACKEND_URL;
-type OnInputChangeHandler = (e: ChangeEvent<HTMLInputElement> & { name: string }) => void;
+
 
 
 function App() {
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<AppState>({
     neighbourhood: '',
     contractType: '',
     propertyType: '',
     minBedrooms: '',
     maxBedrooms: '',
     minBathrooms: '',
-    usdM2MinLimit: '',
-    usdM2MaxLimit: '',
+    usdM2MinLimit: 0,
+    usdM2MaxLimit: 5000,
   });
 
+ 
+
   const [quantity, setQuantity] = useState(0);
-  const [metrics, setMetrics] = useState({ metrics: {}, groupedMetrics: {} });
+  const [metrics, setMetrics] = useState<Metrics>({generalMetrics:{}, groupedMetrics: {}});
 
   type SelectChangeHandler = (newValue: unknown, name: string) => void;
 
@@ -34,11 +39,15 @@ function App() {
     setFilters({ ...filters, [name]: value });
   };
 
-  const onInputChange: OnInputChangeHandler = (e) => {
-    const {value,name } = e.currentTarget
-    setFilters((prevFilters) => ({ ...prevFilters, [name]: value }));
-    console.log(filters);
+  const handleMinPriceChange = (newValue: number) => { 
+    setFilters({ ...filters, usdM2MinLimit: newValue });
+    
   };
+
+  const handleMaxPriceChange = (newValue: number) => { 
+    setFilters({ ...filters, usdM2MaxLimit: newValue });
+  };
+
 
   const handleGetQuantity = async () => {
     const filtersURL = urlMaker(filters);
@@ -51,11 +60,10 @@ function App() {
     const filtersURL = urlMaker(filters);
     const URL = `${BASE_URL}/zonaprop${filtersURL}`;
     const { data } = await axios.get(URL);
-    setMetrics(data);
+    setMetrics(data || {generalMetrics:{}, groupedMetrics: {}});
   };
 
-
-
+  
   return (
     <>
       <div className='flex h-screen'>
@@ -75,11 +83,19 @@ function App() {
         </div>
         <div className='w-full flex flex-col'>
           <div className='h-[500px] bg-gradient-to-r from-violet1 to-violet2 mix-blend-multiply'>
-            <PriceInput label='Precio por m2 máximo: ' onInputChange={onInputChange} name='usdM2MinLimit'></PriceInput>
-            <PriceInput label='Precio por m2 mínimo: ' onInputChange={onInputChange} name='usdM2MaxLimit'></PriceInput>
+            <PriceInput
+              label='Minimum Price:'
+              value={filters.usdM2MinLimit}
+              onChange={handleMinPriceChange}
+            />
+            <PriceInput
+              label='Maximum Price:'
+              value={filters.usdM2MaxLimit}
+              onChange={handleMaxPriceChange}
+            />
           </div>
           <div className='bg-pink1 w-full h-full relative'>
-            <Results quantity={quantity} metrics={metrics}></Results>
+            <Results quantity={quantity} generalMetrics={metrics.generalMetrics} groupedMetrics={metrics.groupedMetrics}></Results>
           </div>
         </div>
       </div>
